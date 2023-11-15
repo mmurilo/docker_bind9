@@ -49,7 +49,7 @@ if [ -n "${ZONES_LIST}" ] && [ -n "${DNS_IP}" ]; then
   ZONES_LIST=($(parse_array "$ZONES_LIST" ','))
   ZONE_TTL="${ZONE_TTL:-3600}"
   ZONE_SERIAL=$(date +%s)
-  # ACL_CIDRS=("192.168.101.0/24")
+  ACL_CIDRS=($(parse_array "$ACL_CIDRS" ','))
   DEFAULT_FORWARDERS=("1.1.1.2" "1.0.0.2" "8.8.8.8")
   CUSTOM_FORWARDERS=($(parse_array "$FORWARDERS" ','))
   FORWARDERS=("${CUSTOM_FORWARDERS[@]:-${DEFAULT_FORWARDERS[@]}}")
