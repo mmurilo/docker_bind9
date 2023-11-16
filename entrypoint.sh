@@ -119,10 +119,10 @@ $(printf '    %s;\n' "${FORWARDERS[@]}")
 
   dnssec-validation auto;
 
-  $(if [ -n "${SLAVE_IP}" ]; then
+  $(if [ -n "${SECONDARY_IP}" ]; then
     echo "notify yes;
-  also-notify { $SLAVE_IP; };
-  allow-transfer { $SLAVE_IP; };"
+  also-notify { $SECONDARY_IP; };
+  allow-transfer { $SECONDARY_IP; };"
   fi)
 };
 

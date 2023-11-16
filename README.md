@@ -2,13 +2,15 @@
 
 ![GitHub release (with filter)](https://img.shields.io/github/v/release/mmurilo/docker_bind9)
 
-<!-- ![Docker Pulls](https://img.shields.io/docker/pulls/:user/:repo) -->
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/mmurilo/bind9)
+
+![Docker Pulls](https://img.shields.io/docker/pulls/mmurilo/bind9)
 
 Modified version of [ubuntu/bind9](https://hub.docker.com/r/ubuntu/bind9) with varibales option to configure Authoritative DNS Server:
 
 - Zone ( single Zone )
 - Forwarders
-- ACL for aloowed CIDRs
+- ACL for allowed CIDRs
 - TSIG_KEY for Dynamic Updates ([RFC 2136](https://datatracker.ietf.org/doc/html/rfc2136))
 - `Notify` and `allow-transfer` to secondary authoritative Name Server
 - `A` records ( for single zone)
@@ -18,7 +20,7 @@ Modified version of [ubuntu/bind9](https://hub.docker.com/r/ubuntu/bind9) with v
 
 ### Basic
 
-Smae as [ubuntu/bind9](https://hub.docker.com/r/ubuntu/bind9)
+Same as [ubuntu/bind9](https://hub.docker.com/r/ubuntu/bind9)
 
 Launch this image locally:
 
@@ -34,7 +36,7 @@ Launch this image locally configuring:
 
 - Zone ( single )
 - Forwarders
-- ACL for aloowed CIDRs
+- ACL for allowed CIDRs
 - TSIG_KEY for Dynamic Updates ([RFC 2136](https://datatracker.ietf.org/doc/html/rfc2136))
 
 ```shell
@@ -44,9 +46,9 @@ docker run -d \
   -e BIND9_USER=root \
   -e TSIG_KEY="123456789abcdfgh" \
   -e ZONES_LIST="myzone.com" \
-  -e FORWARDERS=("1.1.1.1" "1.0.0.1") \
+  -e FORWARDERS=1.1.1.1,1.0.0.1 \
   -e DNS_IP="192.168.0.53" \
-  -e ACL_CIDRS=("192.168.0.0/32" "10.0.0.0/16") \
+  -e ACL_CIDRS=192.168.0.0/32,10.0.0.0/16 \
   -v /path/to/bind/configuration:/etc/bind
   --restart unless-stopped \
   mmurilo/bind9:9.18-22.04_beta
@@ -77,21 +79,21 @@ docker run -d \
 | -e ZONE_TTL="3600"                            | Zone [time to live](https://bind9.readthedocs.io/en/v9.18.19/chapter3.html#the-ttl-directive). Defaults to `3600`                                                                                                     |
 | -e FORWARDERS=1.1.1.1,1.0.0.1           | List of DNS to forward queries. Defaults to `("1.1.1.2" "1.0.0.2" "8.8.8.8"`. Coma separated                                                                                                                                         |
 | -e ACL_CIDRS=192.168.0.0/32,10.0.0.0/16 | List of CIDRS for [ACL](https://bind9.readthedocs.io/en/v9.18.19/chapter7.html#access-control-lists) for dns queries. Coma separated                                                                                                  |
-| -e SLAVE_IP="192.168.0.54"                    | Configure [notify](https://bind9.readthedocs.io/en/v9.18.14/chapter6.html#notify) and [allow-transfer](https://bind9.readthedocs.io/en/v9.18.14/reference.html#namedconf-statement-allow-transfer) to indicated slave |
+| -e SECONDARY_IP="192.168.0.54"                    | Configure [notify](https://bind9.readthedocs.io/en/v9.18.14/chapter6.html#notify) and [allow-transfer](https://bind9.readthedocs.io/en/v9.18.14/reference.html#namedconf-statement-allow-transfer) to indicated [Secondary server](https://bind9.readthedocs.io/en/v9.18.20/chapter3.html#secondary-authoritative-name-server) |
 | -e A_some_name=192.168.0.100                  | Configure a A record entry in a single zone in `ZONES_LIST`                                                                                                                                                                         |
 | -e CNAME_some_name=some_host                  | Configure a CNAME record entry in a single zone in `ZONES_LIST`.                                                                                                                                                    |
-| -e RFC_2136=true | Enable if Zone will be dynamic updated [RFC 2136](https://datatracker.ietf.org/doc/html/rfc2136). eg: terrafomr [DNS provider](https://registry.terraform.io/providers/hashicorp/dns/latest/docs). It requires a volume to persist data between container restart |
+| -e RFC_2136=true | Enable if Zone will be dynamic updated [RFC 2136](https://datatracker.ietf.org/doc/html/rfc2136). eg: terraform [DNS provider](https://registry.terraform.io/providers/hashicorp/dns/latest/docs). It requires a volume to persist data between container restart |
 
 ## Records
 
-`A` and `CNAME` records for A single zone configured with `ZONES_LIST` can be created passing varibales.
+`A` and `CNAME` records for A single zone configured with `ZONES_LIST` can be created passing variables.
 
 For multiple zones ouse [RFC 2136](https://datatracker.ietf.org/doc/html/rfc2136).
 
 each entry will use the following pattern:
 
-varibale name: `type`\_`name`
-varibale value: origin address ( ip for `A` and host for `CNAME`)
+variable name: `type`\_`name`
+variable value: origin address ( ip for `A` and host for `CNAME`)
 
 example:
 
@@ -102,7 +104,7 @@ A_test2="192.168.0.102"
 CNAME_test3="test1.test.com"
 ```
 
-this will create the follwing records:
+this will create the following records:
 
 ```
 ;; A records
