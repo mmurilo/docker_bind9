@@ -78,26 +78,27 @@ if [ -n "${ZONES_LIST}" ] && [ -n "${DNS_IP}" ]; then
 ns            IN     A      $DNS_IP
 
 ; dns record below
-;; A records
-$(
-  if compgen -v A_ > /dev/null; then
-      # Loop through variables starting with "A_"
-      for var_name in $(compgen -v A_); do
-          # Remove the "A_" prefix
-          short_name=${var_name#A_}
-          # Echo variable name without prefix and its value
-          echo "${short_name}    IN     A      ${!var_name}"
-      done
-  fi
-)
 
-;; CNAME records
 $(
-  if compgen -v CNAME_ > /dev/null; then
-      for var_name in $(compgen -v CNAME_); do
-          short_name=${var_name#CNAME_}
-          echo "${short_name}    IN     CNAME      ${!var_name}"
-      done
+  if  [ "${#ZONES_LIST[@]}" -eq 1 ] && [ "${RFC_2136}" != true ]; then
+    if compgen -v A_ > /dev/null; then
+        # Loop through variables starting with "A_"
+        echo ";; A records"
+        for var_name in $(compgen -v A_); do
+            # Remove the "A_" prefix
+            short_name=${var_name#A_}
+            # Echo variable name without prefix and its value
+            echo "${short_name}    IN     A      ${!var_name}"
+        done
+    fi
+
+    if compgen -v CNAME_ > /dev/null; then
+        echo ";; CNAME records"
+        for var_name in $(compgen -v CNAME_); do
+            short_name=${var_name#CNAME_}
+            echo "${short_name}    IN     CNAME      ${!var_name}"
+        done
+    fi
   fi
 )
 
